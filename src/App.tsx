@@ -1,25 +1,31 @@
-import React, { useEffect, useState } from "react";
-import GlobalStyle from "./styles/global";
-import { MainView } from "./styles/components/MainView";
+import React from "react";
+import useWeather, { isError } from "./useWeather";
 
+/** The main app */
 export default function App() {
-  const APIURL = "https://api.openweathermap.org/data/2.5/weather?q=wellesley&APPID=3641e4dc0ad8580be2a1f8a82fa268a2"
-  const [apirespnse, setapiresponse] = useState()
-  useEffect(() => {
-    fetch(APIURL).then(r => {
-      r.text().then(setapiresponse)
-    })
-  }, [])
+    const apiresponse = useWeather("wellsley");
 
+    if (apiresponse === undefined) {
+        // No data screen
+        return (
+            <h1>No Data</h1>
+        );
+    }
 
-  return (
-    <>
-      <GlobalStyle />
-      <MainView>
-        <pre>
-          {apirespnse}
-        </pre>
-      </MainView>
-    </>
-  );
+    if (isError(apiresponse)) {
+        // Error screen
+        return (
+            <>
+                <h1>Error in fetching openweather API: {apiresponse.cod}</h1>
+                <pre>{apiresponse.message}</pre>
+            </>
+        )
+    } else {
+        // Success screen
+        return (
+            <>
+                <pre>{JSON.stringify(apiresponse, undefined, 4)}</pre>
+            </>
+        );
+    }
 }
