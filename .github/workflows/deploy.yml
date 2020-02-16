@@ -1,0 +1,27 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use Node
+        uses: actions/setup-node
+        with:
+          node-version: '12.x'
+      - name: Install Dependencies
+        run: yarn install
+      - name: Build React App
+        run: yarn build
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          # deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          # personal_token: ${{ secrets.PERSONAL_TOKEN }}
+          publish_dir: ./build
